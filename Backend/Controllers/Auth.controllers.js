@@ -78,7 +78,7 @@ const verifyOTP = async (req, res) => {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: "strict", // or "strict"
-        secure: false, // Set to true if using HTTPS
+        secure: true, // Set to true if using HTTPS
         path: "/",
         domain: `${process.env.DOMAIN}`,
       })

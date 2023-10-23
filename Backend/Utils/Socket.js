@@ -3,10 +3,12 @@ const Message = require("../Model/message.model");
 const { validateTokenSocketIO } = require("../Middlewares/Auth.middleware");
 
 function initializeSocketServer(server) {
+  const FRONTEND_URL = process.env.FRONTEND_URL;
   const io = socketIo(server, {
     cors: {
-      origin: `${process.env.FRONTEND_URL}`, // Set to a specific origin in a production environment
+      origin: FRONTEND_URL.split(","), // Set to a specific origin in a production environment
       credentials: true,
+      preflightContinue: false,
     },
   });
 

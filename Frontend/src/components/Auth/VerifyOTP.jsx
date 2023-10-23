@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { TextField } from "@mui/material";
 import axios from "axios";
 import Button from "../GenericComponents/Button/Button";
+import { verifyOTP } from "../../api/auth.api";
+import { useNavigate } from "react-router-dom";
 
 export default function VerifyOTP({
   email,
@@ -11,7 +13,7 @@ export default function VerifyOTP({
 }) {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
-
+  const navigate = useNavigate();
   const handleOtpChange = (event) => {
     setOtp(event.target.value);
     //Otp should be 4 digits and it shoud be numberic only
@@ -26,20 +28,13 @@ export default function VerifyOTP({
     //check for errors
     if (!otpError && otp.length === 4) {
       setIsLoading(true);
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/wts/v1/api/auth/verifyOTP",
-          { email, OTP: parseInt(otp) }
-        );
-        if (response.status === 200) {
-          setIsLogin(true);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
-        setOtpError("Error verifying OTP");
+      const response = await verifyOTP({ email, OTP: parseInt(otp) });
+      if (response.status === 200) {
+        setIsLogin(true);
         setIsLoading(false);
+        navigate("/chat");
       }
+      setIsLoading(false);
     }
   };
 

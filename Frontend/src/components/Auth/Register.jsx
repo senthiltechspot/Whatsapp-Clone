@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import Button from "../GenericComponents/Button/Button";
+import { registerapi } from "../../api/auth.api";
 
 export default function Register({ setIsLogin, isLoading, setIsLoading }) {
   const [formData, setFormData] = useState({
@@ -58,21 +59,18 @@ export default function Register({ setIsLogin, isLoading, setIsLoading }) {
     if (!formErrors.name && !formErrors.username && !formErrors.email) {
       setIsLoading(true);
 
-      try {
-        const { name, email, username } = formData;
-        const response = await axios.post(
-          "http://localhost:5000/wts/v1/api/auth/register",
-          {
-            name,
-            email,
-            username,
-          }
-        );
+      const { name, email, username } = formData;
 
-        setMessage(response.data.message);
+      const response = await registerapi({
+        name,
+        email,
+        username,
+      });
+      if (response.status === 200) {
+        setIsLogin(true);
         setIsLoading(false);
-      } catch (error) {
-        console.error(error);
+        setMessage(response.data.message);
+      } else {
         setMessage("Error registering user");
         setIsLoading(false);
       }

@@ -3,6 +3,7 @@ import { TextField } from "@mui/material";
 import VerifyOTP from "./VerifyOTP"; // Import the OtpVerification component
 import axios from "axios";
 import Button from "../GenericComponents/Button/Button";
+import { sendOTP } from "../../api/auth.api";
 
 export default function Login({ setIsLogin, isLoading, setIsLoading }) {
   const [email, setEmail] = useState("");
@@ -24,20 +25,29 @@ export default function Login({ setIsLogin, isLoading, setIsLoading }) {
     //check for error
     if (!emailError && email.length > 0) {
       setIsLoading(true);
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/wts/v1/api/auth/sendOTP",
-          { email }
-        );
-        if (response.status === 200) {
-          setEmailSent(true);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
+      const response = await sendOTP({ email });
+      if (response.status === 200) {
+        setEmailSent(true);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
         setEmailError("Error sending OTP");
-        setIsLoading(true);
       }
+
+      // try {
+      //   const response = await axios.post(
+      //     "http://localhost:5000/wts/v1/api/auth/sendOTP",
+      //     { email }
+      //   );
+      //   if (response.status === 200) {
+      //     setEmailSent(true);
+      //     setIsLoading(false);
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      //   setEmailError("Error sending OTP");
+      //   setIsLoading(true);
+      // }
     }
   };
 

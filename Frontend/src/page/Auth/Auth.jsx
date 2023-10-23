@@ -15,7 +15,6 @@ export default function Auth() {
         window.location.href = "/chat";
       } else {
         console.log("error");
-        window.location.href = "/";
       }
     };
     fetchuser();

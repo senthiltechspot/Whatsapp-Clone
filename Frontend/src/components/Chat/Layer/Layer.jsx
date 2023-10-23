@@ -98,7 +98,9 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const socket = io("http://localhost:5000/wts/socket/sendMessage", {
+const BASE_URL = `${import.meta.env.VITE_BASE_URL}`;
+
+const socket = io(`${VITE_BASE_URL}/wts/socket/sendMessage`, {
   withCredentials: true,
   extraHeaders: {
     "my-custom-header": "abcd",
@@ -127,7 +129,7 @@ export default function Layer({ chats, currentUser }) {
   };
 
   useEffect(() => {
-    const socket = io("http://localhost:5000/wts/socket/sendMessage", {
+    const socket = io(`${VITE_BASE_URL}/wts/socket/sendMessage`, {
       withCredentials: true,
     });
 
@@ -174,7 +176,7 @@ export default function Layer({ chats, currentUser }) {
   };
 
   useEffect(scrollToBottom, [messages]);
-  
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

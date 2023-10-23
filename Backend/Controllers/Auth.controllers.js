@@ -72,6 +72,7 @@ const verifyOTP = async (req, res) => {
 
     // Send Token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
     return res
       .cookie("token", token, {
         httpOnly: true,
@@ -79,7 +80,7 @@ const verifyOTP = async (req, res) => {
         sameSite: "strict", // or "strict"
         secure: false, // Set to true if using HTTPS
         path: "/",
-        domain: "localhost",
+        domain: `${process.env.DOMAIN}`,
       })
       .send({ message: "OTP verified successfully" });
   } catch (error) {

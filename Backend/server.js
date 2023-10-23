@@ -15,8 +15,9 @@ const initializeSocketServer = require("./Utils/Socket");
 const app = express();
 app.use(cookieParser());
 
+const FRONTEND_URL = process.env.FRONTEND_URL;
 const corsOptions = {
-  origin: `${process.env.FRONTEND_URL}`,
+  origin: FRONTEND_URL.split(","),
   credentials: true,
   preflightContinue: false,
 };

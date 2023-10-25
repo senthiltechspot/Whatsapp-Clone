@@ -1,10 +1,10 @@
 import axios from "axios";
-axios.defaults.withCredentials = true;
 
 const BASE_URL = `${import.meta.env.VITE_BASE_URL}`;
 //Crediantials true
 export const chatApi = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 export const registerapi = async (data) => {

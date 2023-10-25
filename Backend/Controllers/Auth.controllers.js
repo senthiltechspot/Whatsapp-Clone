@@ -77,6 +77,8 @@ const verifyOTP = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
       })
       .send({ message: "OTP verified successfully" });
   } catch (error) {

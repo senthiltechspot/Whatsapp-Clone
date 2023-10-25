@@ -32,7 +32,7 @@ export default function VerifyOTP({
       if (response.status === 200) {
         setIsLogin(true);
         setIsLoading(false);
-        // navigate("/chat");
+        navigate("/chat");
       }
       setIsLoading(false);
     }

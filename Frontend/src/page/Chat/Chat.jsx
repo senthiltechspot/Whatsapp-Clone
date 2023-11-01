@@ -24,7 +24,6 @@ export default function Chat() {
     const fetchuser = async () => {
       const res = await getUserDetails();
       setCurrentUser(res);
-      console.log(res);
       if (!res) {
         console.log("error");
         window.location.href = "/";

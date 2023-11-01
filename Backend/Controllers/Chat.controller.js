@@ -148,20 +148,22 @@ const PersonalChat = async (req, res) => {
       users: {
         $all: [userID, AnotherUserID],
       },
-    });
+    }).populate({
+      path: "users",
+      select: "-otp -otpExpire",
+    })
     if (!chat) {
       const chat = await Chat.create({
         chatName: "Personal",
         isGroupChat: false,
         users: [userID, AnotherUserID],
-      });
-      chat.userName = user.name;
-      console.log(chat);
+      }).populate({
+        path: "users",
+        select: "-otp -otpExpire",
+      })
 
       return res.status(201).json(chat);
     }
-    chat.userName = user.name;
-    console.log(chat, "exits");
 
     res.status(200).json(chat);
   } catch (error) {

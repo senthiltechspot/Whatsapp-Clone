@@ -16,9 +16,35 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
-export default function SearchBar({ users, handleUsers }) {
-  const [state, setState] = React.useState(false);
+export default function SearchBar({
+  users,
+  handleUsers,
+  chats,
+  allChats,
+  setAllChats,
+}) {
+  const [state, setState] = useState(false);
+  const handleSearch = (event) => {
+    const searchText = event.target.value;
+    const filteredUsers = chats.filter((chat) => {
+      if (chat.isGroupChat) {
+        return chat.chatName.toLowerCase().includes(searchText.toLowerCase());
+      }
+      return chat.users
+        .map((user) => user.username)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+    });
+
+    if (searchText.length > 0) {
+      setAllChats(filteredUsers);
+    } else {
+      setAllChats(chats);
+    }
+  };
 
   const list = () => (
     <Box
@@ -71,10 +97,8 @@ export default function SearchBar({ users, handleUsers }) {
         width: 337,
         backgroundColor: "rgb(32, 44, 51)",
       }}
+      onSubmit={(e) => e.preventDefault()}
     >
-      {/* <IconButton sx={{ p: '10px' }} aria-label="menu">
-        <MenuIcon />
-      </IconButton> */}
       <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
         <IconButton type="button" sx={{ p: "7px" }} aria-label="search">
           <SearchIcon />
@@ -83,6 +107,7 @@ export default function SearchBar({ users, handleUsers }) {
           sx={{ ml: 1, flex: 1 }}
           placeholder="Search..."
           inputProps={{ "aria-label": "search google maps" }}
+          onChange={handleSearch}
         />
       </Box>
 

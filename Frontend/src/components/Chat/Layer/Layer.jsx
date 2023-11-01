@@ -108,6 +108,8 @@ const socket = io(`${BASE_URL}/wts/socket/sendMessage`, {
   },
 });
 export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
+  const [allChats, setAllChats] = useState(chats);
+
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -179,9 +181,7 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
     const data = await PersonalChat(user._id);
     setCurrentChat(data);
     fetchAllGroups();
-    console.log(data, currentChat);
   };
-  console.log(currentChat);
 
   useEffect(scrollToBottom, [messages]);
 
@@ -196,12 +196,15 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
       const chatUserName = chat.users.find(
         (user) => user._id !== currentUser._id
       );
+      console.log(chatUserName);
+      return chatUserName.username;
+    } else {
+      console.log(currentChat);
+      const chatUserName = currentChat.users.find(
+        (user) => user._id !== currentUser._id
+      );
       return chatUserName.username;
     }
-    const chatUserName = currentChat.users.find(
-      (user) => user._id !== currentUser._id
-    );
-    return chatUserName.username;
   };
   return (
     <Box sx={{ display: "flex" }}>
@@ -276,10 +279,18 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
           </Box>
         </DrawerHeader>
         <Divider sx={{ bgcolor: "white" }} />
-        {open && <SearchBar users={users} handleUsers={handleUsers} />}
+        {open && (
+          <SearchBar
+            users={users}
+            handleUsers={handleUsers}
+            chats={chats}
+            allChats={allChats}
+            setAllChats={setAllChats}
+          />
+        )}
         <List sx={{ width: "300px" }}>
-          {chats &&
-            chats.map((chat, index) => (
+          {allChats &&
+            allChats.map((chat, index) => (
               <ListItem
                 key={index}
                 disablePadding

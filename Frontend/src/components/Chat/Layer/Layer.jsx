@@ -120,8 +120,6 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
       message: "No Message Found",
     },
   ]);
-  console.log(users);
-  console.log(activeUsers);
 
   const handleDrawerOpen = () => {
     setOpen(!open);
@@ -183,6 +181,7 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
     fetchAllGroups();
     console.log(data, currentChat);
   };
+  console.log(currentChat);
 
   useEffect(scrollToBottom, [messages]);
 
@@ -192,6 +191,18 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
     window.location.reload();
   };
 
+  const findPersonalChatuser = (chat) => {
+    if (chat) {
+      const chatUserName = chat.users.find(
+        (user) => user._id !== currentUser._id
+      );
+      return chatUserName.username;
+    }
+    const chatUserName = currentChat.users.find(
+      (user) => user._id !== currentUser._id
+    );
+    return chatUserName.username;
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -228,7 +239,11 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
                 />
               </Badge>
               <Typography variant="h6" noWrap component="div">
-                {currentChat ? currentChat.chatName : "Chat"}
+                {currentChat
+                  ? currentChat.isGroupChat
+                    ? currentChat.chatName
+                    : findPersonalChatuser()
+                  : "Loading...."}
               </Typography>
             </Box>
           </Toolbar>
@@ -283,7 +298,11 @@ export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
                     />
                     <Box>
                       <ListItemText
-                        primary={chat.chatName}
+                        primary={
+                          chat.isGroupChat
+                            ? chat.chatName
+                            : findPersonalChatuser(chat)
+                        }
                         sx={{ opacity: open ? 1 : 0 }}
                       />
                       <Typography

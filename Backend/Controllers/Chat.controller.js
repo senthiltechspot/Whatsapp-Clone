@@ -1,5 +1,6 @@
 const Chat = require("../Model/chat.model");
 const Message = require("../Model/message.model");
+const User = require("../Model/user.model");
 
 const createGroup = async (req, res) => {
   try {
@@ -99,7 +100,10 @@ const sendMessage = async (req, res) => {
 const getAllGroupforUser = async (req, res) => {
   try {
     const userID = req.user._id;
-    const groups = await Chat.find({ users: userID });
+    const groups = await Chat.find({ users: userID }).populate({
+      path: "users",
+      select: "-otp -otpExpire",
+    })
     return res.status(200).json(groups);
   } catch (error) {
     return res.status(500).json({ message: "Error getting groups" });
@@ -138,6 +142,7 @@ const PersonalChat = async (req, res) => {
   try {
     const userID = req.user._id;
     const AnotherUserID = req.params.id;
+    const user = await User.findById(AnotherUserID);
     const chat = await Chat.findOne({
       isGroupChat: false,
       users: {
@@ -150,8 +155,14 @@ const PersonalChat = async (req, res) => {
         isGroupChat: false,
         users: [userID, AnotherUserID],
       });
+      chat.userName = user.name;
+      console.log(chat);
+
       return res.status(201).json(chat);
     }
+    chat.userName = user.name;
+    console.log(chat, "exits");
+
     res.status(200).json(chat);
   } catch (error) {
     res.status(500).json({ message: "Error getting group chat" });

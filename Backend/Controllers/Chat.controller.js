@@ -106,10 +106,64 @@ const getAllGroupforUser = async (req, res) => {
   }
 };
 
+const getAllUserInGroup = async (req, res) => {
+  try {
+    const groupId = req.params.id;
+    const groups = await Chat.findById(groupId).populate({
+      path: "users",
+      select: "-otp -otpExpire",
+    });
+    return res.status(200).json(groups);
+  } catch (error) {
+    return res.status(500).json({ message: "Error getting groups" });
+  }
+};
+
+const createPersonalChat = async (req, res) => {
+  try {
+    const userID = req.user._id;
+    const { userId } = req.body;
+    const chat = await Chat.create({
+      chatName: "Personal",
+      isGroupChat: false,
+      users: [userID, userId],
+    });
+    res.status(201).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating group chat " + error });
+  }
+};
+
+const PersonalChat = async (req, res) => {
+  try {
+    const userID = req.user._id;
+    const AnotherUserID = req.params.id;
+    const chat = await Chat.findOne({
+      isGroupChat: false,
+      users: {
+        $all: [userID, AnotherUserID],
+      },
+    });
+    if (!chat) {
+      const chat = await Chat.create({
+        chatName: "Personal",
+        isGroupChat: false,
+        users: [userID, AnotherUserID],
+      });
+      return res.status(201).json(chat);
+    }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: "Error getting group chat" });
+  }
+};
 module.exports = {
   createGroup,
   addUserToGroup,
   getAllMessage,
   sendMessage,
   getAllGroupforUser,
+  getAllUserInGroup,
+  createPersonalChat,
+  PersonalChat,
 };

@@ -24,12 +24,12 @@ export default function Auth() {
       style={{ height: "600px" }}
       className="flex justify-center items-center border-solid border-2 border-green-500 bg-emerald-700 m-10"
     >
-      <div className="w-1/2 hidden sm:block">
+      <div className="w-1/2 hidden sm:block p-1">
         <img
           src="https://source.unsplash.com/random"
           alt=""
           width={"700px"}
-          style={{ height: "600px" }}
+          style={{ height: "590px" }}
         />
       </div>
       <div className="md:w-1/2">

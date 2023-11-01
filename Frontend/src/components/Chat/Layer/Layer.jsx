@@ -16,8 +16,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { Avatar, Badge } from "@mui/material";
 import SearchBar from "../SearchBar/SearchBar";
 import MessageBox from "../MessageBox/MessageBox";
@@ -25,6 +24,8 @@ import ChatBox from "../ChatBox/ChatBox";
 import { useState } from "react";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
+import { PersonalChat } from "../../../api/chat.api";
+import { logout } from "../../../api/auth.api";
 
 const drawerWidth = 340;
 
@@ -106,7 +107,7 @@ const socket = io(`${BASE_URL}/wts/socket/sendMessage`, {
     "my-custom-header": "abcd",
   },
 });
-export default function Layer({ chats, currentUser }) {
+export default function Layer({ chats, currentUser, users, fetchAllGroups }) {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -119,6 +120,8 @@ export default function Layer({ chats, currentUser }) {
       message: "No Message Found",
     },
   ]);
+  console.log(users);
+  console.log(activeUsers);
 
   const handleDrawerOpen = () => {
     setOpen(!open);
@@ -174,8 +177,20 @@ export default function Layer({ chats, currentUser }) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   };
+  const handleUsers = async (user) => {
+    const data = await PersonalChat(user._id);
+    setCurrentChat(data);
+    fetchAllGroups();
+    console.log(data, currentChat);
+  };
 
   useEffect(scrollToBottom, [messages]);
+
+  const handleLogout = async () => {
+    await logout();
+    localStorage.clear();
+    window.location.reload();
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -224,6 +239,9 @@ export default function Layer({ chats, currentUser }) {
           <Box className="flex justify-around items-center w-100">
             {open && (
               <>
+                <IconButton onClick={handleLogout} sx={{ color: "white" }}>
+                  <LogoutIcon />
+                </IconButton>
                 <Avatar
                   alt="Remy Sharp"
                   src="https://mui.com/static/images/avatar/1.jpg"
@@ -243,7 +261,7 @@ export default function Layer({ chats, currentUser }) {
           </Box>
         </DrawerHeader>
         <Divider sx={{ bgcolor: "white" }} />
-        {open && <SearchBar />}
+        {open && <SearchBar users={users} handleUsers={handleUsers} />}
         <List sx={{ width: "300px" }}>
           {chats &&
             chats.map((chat, index) => (
@@ -277,7 +295,7 @@ export default function Layer({ chats, currentUser }) {
                       </Typography>
                     </Box>
                   </Box>
-                  <Badge color="success" badgeContent={4} />
+                  {/* <Badge color="success" badgeContent={4} /> */}
                 </Box>
                 <Divider sx={{ bgcolor: "white", width: "340px" }} />
               </ListItem>

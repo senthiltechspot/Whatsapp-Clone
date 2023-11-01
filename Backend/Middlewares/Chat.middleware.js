@@ -35,10 +35,17 @@ const validateSendMessage = (req, res, next) => {
   }
   next();
 };
-
+const validateCreatePersonalChat = (req, res, next) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: "User id is required" });
+  }
+  next();
+};
 module.exports = {
   validateCreateGroup,
   validateAddUserToGroup,
   validateGetAllMessage,
   validateSendMessage,
+  validateCreatePersonalChat,
 };

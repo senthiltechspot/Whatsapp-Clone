@@ -26,3 +26,23 @@ export const getUserDetails = async () => {
     return;
   }
 };
+
+export const AllUsersInGroup = async () => {
+  try {
+    const { data } = await chatApi.get("/wts/v1/api/user/AllUsersInGroup");
+    return data;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+};
+
+export const PersonalChat = async (id) => {
+  try {
+    const { data } = await chatApi.post(`/wts/v1/api/chat/personalChat/${id}`);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+};

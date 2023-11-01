@@ -2,7 +2,7 @@ const User = require("../Model/user.model");
 
 const getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-otp -otpExpire');
+    const user = await User.findById(req.user._id).select("-otp -otpExpire");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -37,7 +37,20 @@ const UpdateUserDetails = async (req, res) => {
   }
 };
 
+const getAllUserDetails = async (req, res) => {
+  try {
+    const user = await User.find().select("-otp -otpExpire");
+    if (!user) {
+      return res.status(404).json({ message: "No Users not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error getting user details" });
+  }
+};
 module.exports = {
   getUserDetails,
   UpdateUserDetails,
-}
+  getAllUserDetails,
+};

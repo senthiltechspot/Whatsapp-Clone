@@ -35,3 +35,14 @@ export const verifyOTP = async (data) => {
     return error;
   }
 };
+
+
+export const logout = async () => {
+  try {
+    const response = await chatApi.post("/wts/v1/api/auth/logout");
+    return response;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}

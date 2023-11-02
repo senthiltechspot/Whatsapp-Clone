@@ -90,6 +90,12 @@ const verifyOTP = async (req, res) => {
 const logout = async (req, res) => {
   try {
     res.clearCookie("token");
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    })
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log(error);

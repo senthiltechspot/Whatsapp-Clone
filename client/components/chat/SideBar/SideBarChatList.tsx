@@ -9,7 +9,6 @@ export const SideBarChatList: React.FC<SideBarChatListProps> = ({
   chats,
   user,
 }) => {
-  console.log(chats);
   const { setCurrentChat, currentChat } = useSocket();
   return (
     <div className="w-full max-w-md bg-slate-950 overflow-y-scroll scrollbar-w-2 h-5/6 overflow-x-hidden">

@@ -9,6 +9,7 @@ export const SideBarChatList: React.FC<SideBarChatListProps> = ({
   chats,
   user,
 }) => {
+  console.log(chats);
   const { setCurrentChat, currentChat } = useSocket();
   return (
     <div className="w-full max-w-md bg-slate-950 overflow-y-scroll scrollbar-w-2 h-5/6 overflow-x-hidden">
@@ -48,9 +49,7 @@ export const SideBarChatList: React.FC<SideBarChatListProps> = ({
                      <p className="text-white font-bold">
                        {chat.isGroupChat
                         ? chat.chatName[0]
-                        : chat.users.filter(
-                            (users: any) => users._id !== user._id
-                          )[0].name[0]}
+                        : chat.users.filter((users: any) => users._id !== user._id)[0]?.name[0]}
                       </p>
                     </div>
                   )}
@@ -61,7 +60,7 @@ export const SideBarChatList: React.FC<SideBarChatListProps> = ({
                       ? chat.chatName
                       : chat.users.filter(
                           (users: any) => users._id !== user._id
-                        )[0].name}
+                        )[0]?.name}
                   </p>
                   <p className="text-sm text-gray-500 truncate dark:text-gray-400">
                     {chat.lastMessage}

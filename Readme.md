@@ -1,9 +1,9 @@
 # WhatsApp Clone App
 Developed and Deployed MERN Stack WhatsApp Clone
 
-[Live Link](https://whatsapp-senthiltechspot.vercel.app/) 
+[Live Link](https://whatsapp-nextjs-senthiltechspot.vercel.app) 
 
-`https://whatsapp-senthiltechspot.vercel.app/`
+`https://whatsapp-nextjs-senthiltechspot.vercel.app/`
 
 
 Technologies Used

@@ -17,6 +17,10 @@ export default function Page() {
     }
   }, [isLoggedIn, router]);
 
+  if (!isLoggedIn) {
+    return null;
+  }
+
   if (isLoggedIn) {
     return <Layer chats={AllGroups} user={user} />; // Render if logged in
   }

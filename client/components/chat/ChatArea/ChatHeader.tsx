@@ -8,9 +8,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   currentChat,
   user,
 }) => {
-  console.log(
-    currentChat?.users.filter((users: any) => users._id !== user._id)[0].name
-  );
+  // console.log(
+  //   currentChat?.users.filter((users: any) => users._id !== user._id)[0].name
+  // );
   return (
     <div
       className="flex flex-row items-center p-3 border-b-2 border-gray-200 rounded-t-lg bg-green-900"

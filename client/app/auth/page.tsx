@@ -23,7 +23,7 @@ export default function Auth() {
   return (
     <div className="h-screen py-10">
       <div className="flex justify-center items-center border-solid border-2 border-green-500 bg-emerald-700 mx-10 h-full">
-        <div className="w-1/2 hidden sm:block p-1 h-full">
+        <div className="w-1/2 hidden lg:block p-1 h-full">
           <img
             src="https://source.unsplash.com/random"
             alt=""

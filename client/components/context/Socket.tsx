@@ -1,19 +1,8 @@
 "use client";
-import {
-  PersonalChat,
-  getAllGroupsForUserAPI,
-  getAllUsers,
-  getUserDetails,
-} from "@/api/chat.api";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
-import { io } from "socket.io-client";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { io, Socket } from "socket.io-client";
 import { useAuth } from "./Auth";
+import { getUserDetails, getAllGroupsForUserAPI, getAllUsers, PersonalChat } from "@/api/chat.api";
 
 type Message = {
   userId: string;
@@ -24,7 +13,7 @@ type Message = {
 type SocketContextType = {
   user: any;
   AllGroups: any[];
-  sendMessage: (newMessage: any) => void;
+  sendMessage: (newMessage: string) => void;
   activeUsers: any[];
   messages: Message[];
   currentChat: any;
@@ -36,46 +25,28 @@ type SocketContextType = {
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 const BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL || "";
-const socket = io(`${BASE_URL}/wts/socket/sendMessage`, {
-  withCredentials: true,
-  extraHeaders: {
-    "my-custom-header": "abcd",
-  },
-});
+let socket: Socket;
 
-export const SocketProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { isLoggedIn } = useAuth();
 
-  // Logged User Details
-  const [user, setuser] = useState<any>(null);
-  // All Chats and Group List for the logged User
+  const [user, setUser] = useState<any>(null);
   const [AllGroups, setAllGroups] = useState<any[]>([]);
-  // Current Chat details
   const [currentChat, setCurrentChat] = useState<any>(null);
-  // All Active Users for the current Chat
   const [activeUsers, setActiveUsers] = useState<any[]>([]);
-  // All Messages for the current Chat
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      userId: "1",
-      userName: "Whatsapp Bot",
-      message: "No Message Found",
-    },
-  ]);
-  // All Users for this app
+  const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<any>([]);
 
   const fetchUserDetails = async () => {
     const res = await getUserDetails();
-    setuser(res);
+    setUser(res);
   };
+
   const fetchAllGroups = async () => {
     const res = await getAllGroupsForUserAPI();
     setAllGroups(res);
-    // setCurrentChat(res[0]);
   };
+
   const fetchAllUsers = async () => {
     const res = await getAllUsers();
     setUsers(res);
@@ -86,47 +57,50 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
     setCurrentChat(data);
     fetchAllGroups();
   };
+
   useEffect(() => {
     if (isLoggedIn) {
-      fetchAllGroups();
       fetchUserDetails();
+      fetchAllGroups();
       fetchAllUsers();
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const socket = io(`${BASE_URL}/wts/socket/sendMessage`, {
+    if (isLoggedIn && currentChat) {
+      socket = io(`${BASE_URL}/wts/socket/sendMessage`, {
         withCredentials: true,
+        extraHeaders: {
+          "my-custom-header": "abcd",
+        },
       });
-      if (currentChat) {
-        socket.on("connect", () => {
-          socket.emit("joinRoom", currentChat._id);
-          socket.emit("getAllMessages", currentChat._id);
-        });
 
-        socket.on("getAllMessages", (existingMessages: Message[]) => {
-          if (existingMessages && existingMessages.length > 0) {
-            setMessages(existingMessages);
-          } else {
-            setMessages([]);
-          }
-        });
+      socket.on("connect", () => {
+        socket.emit("joinRoom", currentChat._id);
+        socket.emit("getAllMessages", currentChat._id);
+      });
 
-        socket.on("message", (message: Message) => {
-          setMessages((prevMessages) => [...prevMessages, message]);
-        });
+      socket.on("getAllMessages", (existingMessages: Message[]) => {
+        setMessages(existingMessages || []);
+      });
 
-        socket.on("activeUsers", (users: any[]) => {
-          setActiveUsers(users);
-        });
-      }
+      socket.on("message", (message: Message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+
+      socket.on("activeUsers", (users: any[]) => {
+        setActiveUsers(users || []);
+      });
 
       return () => {
         socket.disconnect();
+        socket.off("connect");
+        socket.off("getAllMessages");
+        socket.off("message");
+        socket.off("activeUsers");
       };
     }
-  }, [currentChat, isLoggedIn]);
+  }, [isLoggedIn, currentChat]);
 
   const sendMessage = (newMessage: string) => {
     if (newMessage && currentChat) {
@@ -156,7 +130,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
 export const useSocket = (): SocketContextType => {
   const context = useContext(SocketContext);
   if (!context) {
-    throw new Error("useSocket must be used within a LoadingProvider");
+    throw new Error("useSocket must be used within a SocketProvider");
   }
   return context;
 };
